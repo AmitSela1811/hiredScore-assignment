@@ -2,7 +2,7 @@ name: Build and Push Image to AWS ECR
 
 on:
   push:
-    branches: [ feature-branch-1 ]
+    branches: [ feature-eks-3 ]
 
 jobs:
   terraform:
@@ -27,21 +27,24 @@ jobs:
           terraform_version: 1.2.5
 
       - name: Initialize Terraform
-        run: terraform init
+        working-directory: ./terraform/ciReleaseJob
+        run: terraform init 
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1 
 
       - name: Terraform Plan
+        working-directory: ./terraform/ciReleaseJob
         id: plan
-        run: terraform plan
+        run: terraform plan 
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1  
 
-      - name: Apply Terraform
+      - name: Apply Terraform 
+        working-directory: ./terraform/ciReleaseJob
         run: terraform apply -auto-approve
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -80,5 +83,5 @@ jobs:
           ECR_REPOSITORY: numbers-api
           IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f app/Dockerfile app
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

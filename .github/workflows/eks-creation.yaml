@@ -94,7 +94,7 @@ jobs:
         id: plan
         run: terraform plan \
           -var="cluster_name=${{ github.event.inputs.cluster_name }}" \
-          -var="node_type=${{ github.event.inputs.node_type }}" \
+          -var="instance_type=${{ github.event.inputs.instance_type }}" \
           -var="node_count=${{ github.event.inputs.node_count }}" \
           -var="min_node_count=${{ github.event.inputs.min_node_count }}" \
           -var="max_node_count=${{ github.event.inputs.max_node_count }}" \
@@ -112,7 +112,7 @@ jobs:
         working-directory: ./terraform/eksCreationJob
         run: terraform apply -auto-approve \
           -var="cluster_name=${{ github.event.inputs.cluster_name }}" \
-          -var="node_type=${{ github.event.inputs.node_type }}" \
+          -var="instance_type=${{ github.event.inputs.instance_type }}" \
           -var="node_count=${{ github.event.inputs.node_count }}" \
           -var="min_node_count=${{ github.event.inputs.min_node_count }}" \
           -var="max_node_count=${{ github.event.inputs.max_node_count }}" \
@@ -130,7 +130,7 @@ jobs:
         working-directory: ./terraform/eksCreationJob
         run: terraform destroy -auto-approve \
           -var="cluster_name=${{ github.event.inputs.cluster_name }}" \
-          -var="node_type=${{ github.event.inputs.node_type }}" \
+          -var="instance_type=${{ github.event.inputs.instance_type }}" \
           -var="node_count=${{ github.event.inputs.node_count }}" \
           -var="min_node_count=${{ github.event.inputs.min_node_count }}" \
           -var="max_node_count=${{ github.event.inputs.max_node_count }}" \

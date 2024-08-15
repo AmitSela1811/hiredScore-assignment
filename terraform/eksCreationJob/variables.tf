@@ -33,6 +33,11 @@ variable "kubernetes_version" {
   default = "1.21"  
 }
 
+variable "enable_logging" {
+  type    = string
+  default = "false"  
+}
+
 
 
 

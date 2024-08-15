@@ -48,13 +48,12 @@ jobs:
 
       - name: Terraform Workspace
         working-directory: ./terraform/ciReleaseJob/eksCreationJob
-        run: terraform workspace select default || terraform workspace new default
+        run: terraform workspace select ${{ github.event.inputs.cluster_name }} || terraform workspace new ${{ github.event.inputs.cluster_name }}
 
       - name: Terraform Plan
         working-directory: ./terraform/ciReleaseJob/eksCreationJob
         id: plan
-        run: |
-          terraform plan -var="cluster_name=${{ github.event.inputs.cluster_name }}"
+        run: terraform plan -var="cluster_name=${{ github.event.inputs.cluster_name }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -63,8 +62,7 @@ jobs:
       - name: Apply Terraform 
         if: ${{ github.event.inputs.action == 'create' }}
         working-directory: ./terraform/ciReleaseJob/eksCreationJob
-        run: |
-          terraform apply -auto-approve -var="cluster_name=${{ github.event.inputs.cluster_name }}"
+        run: terraform apply -auto-approve -var="cluster_name=${{ github.event.inputs.cluster_name }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -73,8 +71,7 @@ jobs:
       - name: Destroy Terraform 
         if: ${{ github.event.inputs.action == 'delete' }}
         working-directory: ./terraform/ciReleaseJob/eksCreationJob
-        run: |
-          terraform destroy -auto-approve -var="cluster_name=${{ github.event.inputs.cluster_name }}"
+        run: terraform destroy -auto-approve -var="cluster_name=${{ github.event.inputs.cluster_name }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

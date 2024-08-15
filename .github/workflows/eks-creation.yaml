@@ -15,6 +15,45 @@ on:
         required: true
         default: 'default-cluster'
         type: string
+      instance_type:
+        description: 'Type of the EKS worker nodes'
+        required: true
+        default: 't3.medium'
+        type: string
+      node_count:
+        description: 'Number of EKS worker nodes'
+        required: true
+        default: '2'
+        type: string
+      min_node_count:
+        description: 'Minimum number of nodes in the EKS node group'
+        required: true
+        default: '1'
+        type: string
+      max_node_count:
+        description: 'Maximum number of nodes in the EKS node group'
+        required: true
+        default: '3'
+        type: string
+      region:
+        description: 'AWS region where the EKS cluster will be created'
+        required: true
+        default: 'us-east-1'
+        type: string
+      enable_logging:
+        description: 'Enable or disable logging for the EKS cluster'
+        required: true
+        default: 'false'
+        type: string
+      kubernetes_version:
+        description: 'Version of Kubernetes to be used for the EKS cluster'
+        required: false
+        type: string
+      kubeconfig_output:
+        description: 'Specify if kubeconfig should be output'
+        required: false
+        default: 'false'
+        type: string
 
 jobs:
   terraform:
@@ -31,7 +70,7 @@ jobs:
         run: |
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-          aws configure set region us-east-1
+          aws configure set region ${{ github.event.inputs.region }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -44,7 +83,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1 
+          AWS_DEFAULT_REGION: ${{ github.event.inputs.region }}
 
       - name: Terraform Workspace
         working-directory: ./terraform/eksCreationJob
@@ -53,29 +92,56 @@ jobs:
       - name: Terraform Plan
         working-directory: ./terraform/eksCreationJob
         id: plan
-        run: terraform plan -var="cluster_name=${{ github.event.inputs.cluster_name }}"
+        run: terraform plan \
+          -var="cluster_name=${{ github.event.inputs.cluster_name }}" \
+          -var="node_type=${{ github.event.inputs.node_type }}" \
+          -var="node_count=${{ github.event.inputs.node_count }}" \
+          -var="min_node_count=${{ github.event.inputs.min_node_count }}" \
+          -var="max_node_count=${{ github.event.inputs.max_node_count }}" \
+          -var="region=${{ github.event.inputs.region }}" \
+          -var="enable_logging=${{ github.event.inputs.enable_logging }}" \
+          -var="kubernetes_version=${{ github.event.inputs.kubernetes_version }}" \
+          -var="kubeconfig_output=${{ github.event.inputs.kubeconfig_output }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1  
+          AWS_DEFAULT_REGION: ${{ github.event.inputs.region }}
 
       - name: Apply Terraform 
         if: ${{ github.event.inputs.action == 'create' }}
         working-directory: ./terraform/eksCreationJob
-        run: terraform apply -auto-approve -var="cluster_name=${{ github.event.inputs.cluster_name }}"
+        run: terraform apply -auto-approve \
+          -var="cluster_name=${{ github.event.inputs.cluster_name }}" \
+          -var="node_type=${{ github.event.inputs.node_type }}" \
+          -var="node_count=${{ github.event.inputs.node_count }}" \
+          -var="min_node_count=${{ github.event.inputs.min_node_count }}" \
+          -var="max_node_count=${{ github.event.inputs.max_node_count }}" \
+          -var="region=${{ github.event.inputs.region }}" \
+          -var="enable_logging=${{ github.event.inputs.enable_logging }}" \
+          -var="kubernetes_version=${{ github.event.inputs.kubernetes_version }}" \
+          -var="kubeconfig_output=${{ github.event.inputs.kubeconfig_output }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1  
+          AWS_DEFAULT_REGION: ${{ github.event.inputs.region }}
 
       - name: Destroy Terraform 
         if: ${{ github.event.inputs.action == 'delete' }}
         working-directory: ./terraform/eksCreationJob
-        run: terraform destroy -auto-approve -var="cluster_name=${{ github.event.inputs.cluster_name }}"
+        run: terraform destroy -auto-approve \
+          -var="cluster_name=${{ github.event.inputs.cluster_name }}" \
+          -var="node_type=${{ github.event.inputs.node_type }}" \
+          -var="node_count=${{ github.event.inputs.node_count }}" \
+          -var="min_node_count=${{ github.event.inputs.min_node_count }}" \
+          -var="max_node_count=${{ github.event.inputs.max_node_count }}" \
+          -var="region=${{ github.event.inputs.region }}" \
+          -var="enable_logging=${{ github.event.inputs.enable_logging }}" \
+          -var="kubernetes_version=${{ github.event.inputs.kubernetes_version }}" \
+          -var="kubeconfig_output=${{ github.event.inputs.kubeconfig_output }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
+          AWS_DEFAULT_REGION: ${{ github.event.inputs.region }}
 
       - name: Check for Errors
         if: failure()

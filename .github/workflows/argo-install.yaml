@@ -1,0 +1,79 @@
+name: Install ArgoCD
+
+on:
+  workflow_dispatch:
+    inputs:
+      cluster_name:
+        description: 'EKS Cluster name'
+      env_type:
+        description: 'dev, prod'
+        required: true
+        type: string
+      region:
+        description: 'AWS Region'
+        required: true
+        type: string
+      availability_zone:
+        description: 'AWS Availability Zone'
+        required: true
+        type: string
+
+jobs:
+  install-argocd:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: '3.9.0' # Use the desired Helm version
+
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ github.event.inputs.region }}
+
+      - name: Set up kubectl
+        run: |
+          aws eks update-kubeconfig --name ${{ github.event.inputs.env_type }}-${{ github.event.inputs.cluster_name }} --region ${{ github.event.inputs.region }}
+
+      - name: Add ArgoCD Helm repo
+        run: helm repo add argo https://argoproj.github.io/argo-helm
+
+      - name: Update Helm repo
+        run: helm repo update
+
+      - name: Install ArgoCD
+        run: |
+          helm upgrade --install argocd argo/argo-cd --namespace argocd --create-namespace
+
+      - name: Check ArgoCD installation
+        run: kubectl get all -n argocd
+
+  apply-argocd-application:
+    runs-on: ubuntu-latest
+    needs: install-argocd
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ github.event.inputs.region }}
+
+      - name: Set up kubectl
+        run: |
+          aws eks update-kubeconfig --name ${{ github.event.inputs.env_type }}-${{ github.event.inputs.cluster_name }} --region ${{ github.event.inputs.region }}
+
+      - name: Apply ArgoCD parent application
+        run: |
+          kubectl apply -f apps/apps-${{ github.event.inputs.env_type }}.yaml

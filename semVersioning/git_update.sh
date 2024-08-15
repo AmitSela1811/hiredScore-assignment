@@ -2,7 +2,7 @@
 
 VERSION="patch"  # Default to patch if no input provided
 
-# get parameters
+# Get parameters
 while getopts v: flag
 do
   case "${flag}" in
@@ -10,7 +10,7 @@ do
   esac
 done
 
-# get highest tag number, and add v0.1.0 if it doesn't exist
+# Get highest tag number, and add v0.1.0 if it doesn't exist
 git fetch --tags --prune --unshallow 2>/dev/null || git fetch --tags --prune 2>/dev/null
 CURRENT_VERSION=$(git describe --abbrev=0 --tags 2>/dev/null)
 
@@ -30,6 +30,10 @@ IFS='.' read -r -a VERSION_PARTS <<< "$CURRENT_VERSION"
 VNUM1=${VERSION_PARTS[0]:-0}
 VNUM2=${VERSION_PARTS[1]:-0}
 VNUM3=${VERSION_PARTS[2]:-0}
+
+# Debugging output
+echo "Parsed Version Parts -> VNUM1: $VNUM1, VNUM2: $VNUM2, VNUM3: $VNUM3"
+echo "Requested version bump type: $VERSION"
 
 # Increment the appropriate version number
 case $VERSION in
@@ -68,5 +72,5 @@ else
   echo "Already a tag on this commit"
 fi
 
-echo ::set-output name=git-tag::$NEW_TAG
+echo "::set-output name=git-tag::$NEW_TAG"
 exit 0

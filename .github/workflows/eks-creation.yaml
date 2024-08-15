@@ -10,6 +10,11 @@ on:
         options:
           - create
           - delete
+      cluster_name:
+        description: 'Name of the EKS cluster'
+        required: true
+        default: 'default-cluster'
+        type: string
 
 jobs:
   terraform:
@@ -41,10 +46,15 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1 
 
+      - name: Terraform Workspace
+        working-directory: ./terraform/ciReleaseJob/eksCreationJob
+        run: terraform workspace select default || terraform workspace new default
+
       - name: Terraform Plan
         working-directory: ./terraform/ciReleaseJob/eksCreationJob
         id: plan
-        run: terraform plan 
+        run: |
+          terraform plan -var="cluster_name=${{ github.event.inputs.cluster_name }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -53,7 +63,8 @@ jobs:
       - name: Apply Terraform 
         if: ${{ github.event.inputs.action == 'create' }}
         working-directory: ./terraform/ciReleaseJob/eksCreationJob
-        run: terraform apply -auto-approve
+        run: |
+          terraform apply -auto-approve -var="cluster_name=${{ github.event.inputs.cluster_name }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -62,8 +73,13 @@ jobs:
       - name: Destroy Terraform 
         if: ${{ github.event.inputs.action == 'delete' }}
         working-directory: ./terraform/ciReleaseJob/eksCreationJob
-        run: terraform destroy -auto-approve
+        run: |
+          terraform destroy -auto-approve -var="cluster_name=${{ github.event.inputs.cluster_name }}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
+
+      - name: Check for Errors
+        if: failure()
+        run: echo "An error occurred during the Terraform process."

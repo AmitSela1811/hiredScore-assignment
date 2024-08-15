@@ -51,7 +51,7 @@ jobs:
         run: terraform workspace select ${{ github.event.inputs.cluster_name }} || terraform workspace new ${{ github.event.inputs.cluster_name }}
 
       - name: Terraform Plan
-        working-directory: ./terraform/ciReleaseJob/eksCreationJob
+        working-directory: ./terraform/eksCreationJob
         id: plan
         run: terraform plan -var="cluster_name=${{ github.event.inputs.cluster_name }}"
         env:

@@ -93,16 +93,8 @@ jobs:
       - name: Terraform Plan
         working-directory: ./terraform/eksCreationJob
         id: plan
-        run: terraform plan \
-          -var="cluster_name=${{ github.event.inputs.cluster_name }}" \
-          -var="instance_type=${{ github.event.inputs.instance_type }}" \
-          -var="node_count=${{ github.event.inputs.node_count }}" \
-          -var="min_node_count=${{ github.event.inputs.min_node_count }}" \
-          -var="max_node_count=${{ github.event.inputs.max_node_count }}" \
-          -var="region=${{ github.event.inputs.region }}" \
-          -var="enable_logging=${{ github.event.inputs.enable_logging }}" \
-          -var="kubernetes_version=${{ github.event.inputs.kubernetes_version }}" \
-          -var="kubeconfig_output=${{ github.event.inputs.kubeconfig_output }}"
+        run: terraform plan -var="cluster_name=default-cluster" -var="instance_type=t3.medium" -var="node_count=2" -var="min_node_count=1" -var="max_node_count=3" -var="region=us-east-1" -var="enable_logging=false" -var="kubernetes_version=1.21" -var="kubeconfig_output=false"
+
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

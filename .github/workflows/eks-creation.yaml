@@ -47,6 +47,7 @@ on:
         type: string
       kubernetes_version:
         description: 'Version of Kubernetes to be used for the EKS cluster'
+        default: '1.21'
         required: false
         type: string
       kubeconfig_output:

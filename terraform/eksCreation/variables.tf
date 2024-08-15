@@ -38,6 +38,11 @@ variable "enable_logging" {
   default = "false"  
 }
 
+variable "kubeconfig_output" {
+  type    = string
+  default = "false"  
+}
+
 
 
 

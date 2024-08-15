@@ -40,8 +40,8 @@ resource "aws_eks_cluster" "demo" {
 
 terraform {
   backend "s3" {
-    bucket         = "eks-creation-terraform"
-    key            = "terraform/state.tfstate"
+    bucket         = "hired-score-tf"
+    key            = "terraform/eks-creation/state.tfstate"
     region         = "us-east-1"
   }
 }

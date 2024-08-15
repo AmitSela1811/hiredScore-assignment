@@ -4,8 +4,8 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    bucket         = "numbers-api-terraform"
-    key            = "terraform/state.tfstate"
+    bucket         = "hired-score-tf"
+    key            = "terraform/numbers-api/state.tfstate"
     region         = "us-east-1"
   }
 }

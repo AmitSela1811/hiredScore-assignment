@@ -27,7 +27,7 @@ jobs:
           terraform_version: 1.2.5
 
       - name: Initialize Terraform
-        working-directory: ./terraform/ciReleaseJob
+        working-directory: ./terraform/buildService
         run: terraform init 
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -35,7 +35,7 @@ jobs:
           AWS_DEFAULT_REGION: us-east-1 
 
       - name: Terraform Plan
-        working-directory: ./terraform/ciReleaseJob
+        working-directory: ./terraform/buildService
         id: plan
         run: terraform plan 
         env:
@@ -44,7 +44,7 @@ jobs:
           AWS_DEFAULT_REGION: us-east-1  
 
       - name: Apply Terraform 
-        working-directory: ./terraform/ciReleaseJob
+        working-directory: ./terraform/buildService
         run: terraform apply -auto-approve
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -73,8 +73,8 @@ jobs:
       - name: Automatic Tagging of Releases
         id: increment-git-tag
         run: |
-          chmod +x ./build/git_update.sh
-          bash ./build/git_update.sh -v major
+          chmod +x ./semVersioning/git_update.sh
+          bash ./semVersioning/git_update.sh -v major
 
       - name: Build, Tag, and Push the Image to Amazon ECR
         id: build-image

@@ -4,7 +4,7 @@ variable "cluster_name" {
 }
 
 variable "instance_type" {
-  description = instance type"
+  description = "instance type"
   type        = string
 }
 

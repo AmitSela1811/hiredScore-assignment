@@ -112,7 +112,7 @@ jobs:
         run: |
           git config --global user.name "$GIT_COMMITTER_NAME"
           git config --global user.email "$GIT_COMMITTER_EMAIL"
-          git clone https://github.com/AmitSela1811/hiredScore-assignment.git/helm-charts.git
+          git clone https://github.com/AmitSela1811/hiredScore-assignment.git
           cp ./numbers-api-*.tgz ./helm-charts/
           cd helm-charts
           git add .

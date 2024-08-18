@@ -1,0 +1,22 @@
+app:
+  name: numbers-api
+
+deployment:
+  name: numbers-api
+  replicas: 3
+
+image:
+  repository: 905418359591.dkr.ecr.us-east-1.amazonaws.com/numbers-api
+  tag: v1.0.0
+  pullSecret: ecr-secret
+
+container:
+  port: 8080
+
+service:
+  name: numbers-api-service
+  port: 80
+  targetPort: 8080
+  type: LoadBalancer
+
+environment: "dev"

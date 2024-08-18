@@ -24,16 +24,3 @@ spec:
           value: "dev"
       imagePullSecrets:
       - name: ecr-secret
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: numbers-api-service
-spec:
-  selector:
-    app: numbers-api
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8080
-  type: LoadBalancer

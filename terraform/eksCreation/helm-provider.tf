@@ -1,9 +1,9 @@
 data "aws_eks_cluster" "eks" {
-  name = locals.eks_name
+  name = aws_eks_cluster.eks.name
 }
 
 data "aws_eks_cluster_auth" "eks" {
-  name = locals.eks_name
+  name = aws_eks_cluster.eks.name
 }
 
 provider "helm" {

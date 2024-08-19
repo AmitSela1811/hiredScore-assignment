@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "argocd_image_updater" {
 }
 
 resource "aws_iam_role" "argocd_image_updater" {
-  name               = "${var.cluster_name}-argocd-image-updater"
+  name               = "${locals.eks_name}-argocd-image-updater"
   assume_role_policy = data.aws_iam_policy_document.argocd_image_updater.json
 }
 
@@ -25,7 +25,7 @@ resource "aws_iam_role_policy_attachment" "argocd_image_updater" {
 }
 
 resource "aws_eks_pod_identity_association" "argocd_image_updater" {
-  cluster_name    = var.cluster_name
+  cluster_name    = locals.eks_name
   namespace       = "argocd"
   service_account = "argocd-image-updater"
   role_arn        = aws_iam_role.argocd_image_updater.arn

@@ -8,10 +8,10 @@ spec:
   source:
     repoURL: https://github.com/AmitSela1811/hiredScore-assignment.git
     targetRevision: HEAD
-    path: helm/numbers-api-chart
+    path: numbers-api/chart
   destination:
     server: https://kubernetes.default.svc
-    namespace: numbers-api
+    namespace: apps
 
   syncPolicy:
       syncOptions:

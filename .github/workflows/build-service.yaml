@@ -83,5 +83,5 @@ jobs:
           ECR_REPOSITORY: numbers-api
           IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f app/Dockerfile app
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f numbers-api/dockerfile app
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

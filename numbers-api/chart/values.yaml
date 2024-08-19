@@ -1,0 +1,43 @@
+application:
+  namespaceOverride: "apps"
+  applicationName: "numbers-api"
+
+  deployment:
+    enabled: true
+    reloadOnChange: false
+    replicas: 2
+    image: 
+      repository: 905418359591.dkr.ecr.us-east-1.amazonaws.com/numbers-api
+      tag: v1.0.0
+      pullSecret: ecr-secret
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      runAsNonRoot: false
+    ports:
+    - containerPort: 8080
+      name: http
+      protocol: TCP
+
+    readinessProbe:
+      enabled: true
+      httpGet:
+        path: /ready
+        port: 8080
+        scheme: HTTP
+
+    livenessProbe:
+      enabled: true
+      httpGet:
+        path: /ready
+        port: 8080
+        scheme: HTTP
+
+
+  service:
+    enabled: true   
+    ports:
+      - port: 8080
+        name: http
+        protocol: TCP
+        targetPort: 8080
+    type: ClusterIP

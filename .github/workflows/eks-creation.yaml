@@ -120,3 +120,51 @@ jobs:
       - name: Check for Errors
         if: failure()
         run: echo "An error occurred during the Terraform process."
+
+  install-ingress:
+    name: Install Ingress Controller
+    runs-on: ubuntu-latest
+    needs: terraform
+    if: ${{ github.event.inputs.action == 'create' }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set region ${{ github.event.inputs.region }}
+
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v1
+        with:
+          version: '1.26.0'
+
+      - name: Update Kubeconfig
+        run: aws eks update-kubeconfig --name ${{ github.event.inputs.cluster_name }} --region ${{ github.event.inputs.region }}
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        with:
+          version: '3.11.2'
+
+      - name: Add Helm Repository
+        run: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+
+      - name: Install Ingress-NGINX
+        run: helm install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace
+
+      - name: Verify Ingress-NGINX Installation
+        run: kubectl get pods -n ingress-nginx
+
+      - name: Check Ingress-NGINX Service
+        run: kubectl get svc -n ingress-nginx
+
+      - name: Check for Errors
+        if: failure()
+        run: echo "An error occurred during the Ingress-NGINX installation."
+

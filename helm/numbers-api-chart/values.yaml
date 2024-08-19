@@ -3,7 +3,7 @@ app:
 
 deployment:
   name: numbers-api
-  replicas: 5
+  replicas: 3
 
 image:
   repository: 905418359591.dkr.ecr.us-east-1.amazonaws.com/numbers-api

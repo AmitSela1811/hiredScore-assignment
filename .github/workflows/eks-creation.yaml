@@ -139,10 +139,12 @@ jobs:
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set region ${{ github.event.inputs.region }}
 
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v1
-        with:
-          version: '1.26.0'
+      - name: Set up kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/v1.26.0/bin/linux/amd64/kubectl"
+          chmod +x ./kubectl
+          sudo mv ./kubectl /usr/local/bin/kubectl
+          kubectl version --client
 
       - name: Update Kubeconfig
         run: aws eks update-kubeconfig --name ${{ github.event.inputs.cluster_name }} --region ${{ github.event.inputs.region }}

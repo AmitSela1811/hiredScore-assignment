@@ -147,7 +147,7 @@ jobs:
           kubectl version --client
 
       - name: Update Kubeconfig
-        run: aws eks update-kubeconfig --name ${{ github.event.inputs.cluster_name }} --region ${{ github.event.inputs.region }}
+        run: aws eks update-kubeconfig --name prod-${{ github.event.inputs.cluster_name }} --region ${{ github.event.inputs.region }}
 
       - name: Install Helm
         uses: azure/setup-helm@v1

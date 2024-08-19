@@ -44,3 +44,11 @@ resource "aws_eks_cluster" "eks" {
 
   depends_on = [aws_iam_role_policy_attachment.eks]
 }
+
+terraform {
+  backend "s3" {
+    bucket         = "hired-score-tf"
+    key            = "terraform/eks-creation/state.tfstate"
+    region         = var.region
+  }
+}

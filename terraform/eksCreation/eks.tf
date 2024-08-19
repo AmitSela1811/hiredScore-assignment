@@ -49,6 +49,6 @@ terraform {
   backend "s3" {
     bucket         = "hired-score-tf"
     key            = "terraform/eks-creation/state.tfstate"
-    region         = locals.region
+    region         = "us-east-1"
   }
 }

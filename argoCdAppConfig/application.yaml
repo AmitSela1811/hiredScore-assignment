@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/AmitSela1811/hiredScore-assignment.git
     targetRevision: HEAD
-    path: argoCdAppConfig/dev
+    path: helm/numbers-api-chart
   destination:
     server: https://kubernetes.default.svc
     namespace: numbers-api

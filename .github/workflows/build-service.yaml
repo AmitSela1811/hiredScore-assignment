@@ -2,7 +2,7 @@ name: Build, Push Image to AWS ECR, and Deploy Helm Chart
 
 on:
   push:
-    branches: [ main ]
+    branches: [ feature-branch-4 ]
 
 jobs:
   terraform:

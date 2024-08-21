@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="patch"  # Default to patch if no input provided
+VERSION="patch" 
 
 # Get parameters
 while getopts v: flag

@@ -2,7 +2,6 @@
 
 VERSION="patch" 
 
-# Get parameters
 while getopts v: flag
 do
   case "${flag}" in
